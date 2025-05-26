@@ -1,45 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        #chatbox { width: 100%; max-width: 600px; margin: 0 auto; }
-        .message { margin: 10px 0; }
-        .user { text-align: right; }
-        .bot { text-align: left; }
-        #input { width: calc(100% - 100px); padding: 10px; }
-        #send { padding: 10px; }
-    </style>
-    <link rel="stylesheet" href="static/chatbot.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Health Assistant Chatbot</title>
+  <link rel="stylesheet" href="static/chatbot.css" />
 </head>
 <body>
-    <div id="chatbox">
-        <div id="messages"></div>
-        <input id="input" type="text" placeholder="Type a message...">
-        <button id="send">Send</button>
+  <div id="chatbox">
+    <div id="header">
+      <h2>Health Assistant</h2>
     </div>
-    <script>
-        const messagesDiv = document.getElementById('messages');
-        const inputField = document.getElementById('input');
-        const sendButton = document.getElementById('send');
+    
+    <div id="messages"></div>
 
-        function addMessage(content, sender) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message ' + sender;
-            messageDiv.textContent = content;
-            messagesDiv.appendChild(messageDiv);
-        }
+    <div id="input-container">
+      <input id="input" type="text" placeholder="Type a message...">
+      <button id="send">Send</button>
+    </div>
+  </div>
 
-        sendButton.addEventListener('click', async () => {
-            const userMessage = inputField.value;
-            if (!userMessage.trim()) return;
+  <script>
+    const messagesDiv = document.getElementById('messages');
+    const inputField = document.getElementById('input');
+    const sendButton = document.getElementById('send');
 
-            addMessage(userMessage, 'user');
-            inputField.value = '';
+    function addMessage(content, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message ' + sender;
+        messageDiv.textContent = content;
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
 
+    async function sendMessage() {
+        const userMessage = inputField.value.trim();
+        if (!userMessage) return;
+
+        addMessage(userMessage, 'user');
+        inputField.value = '';
+
+        try {
             const response = await fetch('/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -48,7 +49,15 @@
 
             const data = await response.json();
             addMessage(data.response, 'bot');
-        });
-    </script>
+        } catch (error) {
+            addMessage("Something went wrong. Please try again.", 'bot');
+        }
+    }
+
+    sendButton.addEventListener('click', sendMessage);
+    inputField.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') sendMessage();
+    });
+  </script>
 </body>
 </html>

@@ -1,87 +1,114 @@
-
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #e0f7fa, #f1f8e9);
     margin: 0;
     padding: 0;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
 }
 
 #chatbox {
     width: 100%;
     max-width: 600px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+    height: 80vh;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    position: relative;
 }
 
 #messages {
     flex: 1;
     padding: 20px;
     overflow-y: auto;
-    border-bottom: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    scroll-behavior: smooth;
 }
 
 .message {
     margin: 10px 0;
-    padding: 10px;
-    border-radius: 5px;
+    padding: 12px 16px;
+    border-radius: 20px;
     max-width: 70%;
-    line-height: 1.4;
+    line-height: 1.5;
+    font-size: 15px;
+    word-wrap: break-word;
+    transition: all 0.3s ease-in-out;
 }
 
 .user {
-    background-color: #e0f7fa;
+    background-color: #d1f2eb;
+    color: #00695c;
     align-self: flex-end;
-    color: #00796b;
+    border-bottom-right-radius: 0;
 }
 
 .bot {
-    background-color: #f1f8e9;
+    background-color: #fef9e7;
+    color: #7e5109;
     align-self: flex-start;
-    color: #33691e;
+    border-bottom-left-radius: 0;
 }
 
 #input-container {
     display: flex;
-    padding: 10px;
+    padding: 8px 12px;
     background-color: #f5f5f5;
-    border-top: 1px solid #ddd;
+    align-items: center;
 }
 
 #input {
     flex: 1;
-    padding: 10px;
+    padding: 8px 12px;
+    width:auto;
     font-size: 16px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 25px;
     outline: none;
-    transition: border-color 0.2s;
+    transition: 0.3s;
 }
 
 #input:focus {
-    border-color: #00796b;
+    border-color: #26a69a;
+    box-shadow: 0 0 0 3px rgba(38, 166, 154, 0.2);
 }
 
 #send {
-    margin-left: 10px;
-    padding: 10px 20px;
-    background-color: #00796b;
+    margin-left: 12px;
+    padding: 12px 20px;
+    background-color: #26a69a;
     color: #ffffff;
     font-size: 16px;
     border: none;
-    border-radius: 4px;
+    border-radius: 25px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: 0.3s;
 }
 
 #send:hover {
-    background-color: #004d40;
+    background-color: #00796b;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+}
+#header {
+    padding: 20px;
+    text-align: center;
+    background: #00796b;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
 }
