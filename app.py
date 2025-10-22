@@ -8,6 +8,11 @@ from flask import Flask, request, jsonify, render_template
 from nltk.stem import WordNetLemmatizer
 from tensorflow.keras.models import load_model
 
+try:
+    nltk.data.find('tokenizers/punkt_tab')
+except LookupError:
+    nltk.download('punkt_tab', quiet=True)
+
 # Flask setup
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
