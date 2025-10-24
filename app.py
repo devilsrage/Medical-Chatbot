@@ -8,41 +8,47 @@ from flask import Flask, request, jsonify, render_template
 from nltk.stem import WordNetLemmatizer
 from tensorflow.keras.models import load_model
 
-# Flask setup
+# Setup Flask
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
 # Logging setup
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Initialize NLTK
+# NLTK setup (avoid runtime downloads on Render)
 lemmatizer = WordNetLemmatizer()
-nltk.download('punkt', quiet=True)
-nltk.download('wordnet', quiet=True)
 
-# Load intents
-logger.info("Loading intents...")
+# --- Download required data once ---
+nltk.data.path.append("/usr/share/nltk_data")
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt', quiet=True)
+try:
+    nltk.data.find('corpora/wordnet')
+except LookupError:
+    nltk.download('wordnet', quiet=True)
+
+# --- Load intents ---
 with open('expanded_medical.json', 'r') as file:
     intents = json.load(file)
-logger.info("Intents loaded successfully.")
+logger.info("Loaded intents.")
 
-# Load model safely
-logger.info("Loading model...")
-MODEL_PATH_H5 = 'chatbot_model.h5'
+# --- Load Model ---
 MODEL_PATH_KERAS = 'chatbot_model.keras'
+MODEL_PATH_H5 = 'chatbot_model.h5'
 
-try:
-    if os.path.exists(MODEL_PATH_KERAS):
-        model = load_model(MODEL_PATH_KERAS, compile=False)
-        logger.info("Loaded model from .keras file")
-    else:
-        model = load_model(MODEL_PATH_H5, compile=False)
-        logger.info("Loaded model from .h5 file")
-except Exception as e:
-    logger.error(f"Error loading model: {e}")
-    raise e
+model = None
+if os.path.exists(MODEL_PATH_KERAS):
+    model = load_model(MODEL_PATH_KERAS, compile=False)
+    logger.info("Loaded model from .keras file")
+elif os.path.exists(MODEL_PATH_H5):
+    model = load_model(MODEL_PATH_H5, compile=False)
+    logger.info("Loaded model from .h5 file")
+else:
+    raise FileNotFoundError("No model file found!")
 
-# Build vocabulary
+# --- Build vocabulary ---
 words, classes = [], []
 ignore_letters = ['?', '!', '.', ',']
 
@@ -100,9 +106,10 @@ def chat():
 
         return jsonify({"response": response})
     except Exception as e:
-        logger.error(f"Error in /chat: {e}")
+        logger.exception("Error in /chat")
         return jsonify({"error": "Internal server error"}), 500
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    # Don't use debug or threaded mode on Render
+    app.run(host="0.0.0.0", port=port)
