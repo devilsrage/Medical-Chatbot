@@ -5,6 +5,8 @@ import json
 import random
 import logging
 import nltk
+nltk.data.path.append("nltk_data")
+
 import numpy as np
 from flask import Flask, request, jsonify, render_template
 from nltk.stem import WordNetLemmatizer
