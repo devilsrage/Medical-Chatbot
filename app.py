@@ -1,4 +1,5 @@
 import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Disable GPU
 import json
 import random
 import logging
